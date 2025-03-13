@@ -1,6 +1,6 @@
 export async function putRequest(todo) {
     const response = await fetch(`https://dummyjson.com/todos/${todo.id}`, {
-        method: 'PUT', /* or PATCH */
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             completed: todo.completed,

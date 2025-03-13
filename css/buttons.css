@@ -47,7 +47,7 @@ button:hover {
 }
 
 .edit-btn {
-    background-color: #3498db; /* Blue color */
+    background-color: #3498db; 
     color: white;
     border: none;
     padding: 6px 12px;
@@ -58,6 +58,6 @@ button:hover {
 }
 
 .edit-btn:hover {
-    background-color: #2980b9; /* Darker blue on hover */
+    background-color: #2980b9; 
 }
 
