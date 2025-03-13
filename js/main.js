@@ -5,10 +5,18 @@ import { saveToLocalStorage } from "./saveToLocalStorage.js";
 
 // Fetching TODO list from API
 async function fetchTodos() {
-    const response = await fetch('https://dummyjson.com/todos');
-    const data = await response.json();
-    displayTodos(data.todos);
-    localStorage.setItem("todos", JSON.stringify(data.todos));
+    try{
+        const response = await fetch('https://dummyjson.com/todos');
+        if(!response.ok){
+            throw new Error(`Failed to create TODO, Status: ${response.status}`);
+        }
+        const data = await response.json();
+        displayTodos(data.todos);
+        localStorage.setItem("todos", JSON.stringify(data.todos));
+    }catch(error){
+        console.error('Error Fetching To do Data:', error.message);
+    }
+    
 }
 
 // Function to display TODO list
@@ -47,15 +55,25 @@ document.getElementById('add-todo-form').addEventListener('submit', async (e) =>
     const todoTableBody = document.getElementById('todo-table-body');
 
     // Send new TODO to API
-    const response = await postRequest(newTodo)
-    const createdTodo = await response.json(); 
-    
-    // Add new TODO to the DOM using the response data
-    addTask(createdTodo, todoTableBody);
-    saveToLocalStorage(createdTodo)
+    try{
+        const response = await postRequest(newTodo);
 
-    // Clear input field after adding
-    newTodoInput.value = '';
+        if(!response.ok){
+            throw new Error(`Failed to create TODO, Status: ${response.status}`);
+        }
+
+        const createdTodo = await response.json(); 
+        
+        // Add new TODO to the DOM using the response data
+        addTask(createdTodo, todoTableBody);
+        saveToLocalStorage(createdTodo)
+    
+        // Clear input field after adding
+        newTodoInput.value = '';
+    }catch(error){
+        console.error('Error adding new TODO:', error.message);
+    }
+    
 });
 
 // Search TODOs functionality
