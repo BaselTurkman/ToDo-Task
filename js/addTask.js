@@ -8,12 +8,15 @@ export function addTask(todo, todoTableBody) {
     const row = document.createElement('tr');
     row.innerHTML = `
         <td>${todo.id}</td>
-        <td class="todo-text ${todo.completed ? 'completed' : ''}">${todo.todo}</td>
+        <td class="todo-text ${todo.completed ? 'completed' : ''}" contenteditable="false">
+            ${todo.todo}
+        </td>
         <td>${todo.userId}</td>
         <td class="status ${todo.completed ? 'completed-status' : 'pending-status'}">
             ${todo.completed ? 'Completed' : 'Pending'}
         </td>
         <td>
+            <button class="edit-btn" data-id="${todo.id}">Edit</button>
             <button class="toggle-btn" data-id="${todo.id}">
                 ${todo.completed ? 'Undo' : 'Complete'}
             </button>
@@ -22,6 +25,7 @@ export function addTask(todo, todoTableBody) {
     `;
 
     const todoText = row.querySelector('.todo-text');
+    const editBtn = row.querySelector('.edit-btn');
     const statusCell = row.querySelector('.status');
     const toggleBtn = row.querySelector('.toggle-btn');
 
@@ -33,22 +37,41 @@ export function addTask(todo, todoTableBody) {
         statusCell.classList.toggle('completed-status', isCompleted);
         statusCell.classList.toggle('pending-status', !isCompleted);
         todo.completed = isCompleted;
-        putRequest(todo)
-        updateLocalStorage(todo)
+        putRequest(todo);
+        updateLocalStorage(todo);
     });
 
     // Handle task deletion
     row.querySelector('.delete-btn').addEventListener('click', () => {
-        if(confirm("Do you want to delete this task?")){
+        if(confirm("Do you want to delete this task?")) {
             row.remove();
-            deleteRequest(todo.id)
+            deleteRequest(todo.id);
             updateTaskCount();
-            removeFromLocalStorage(todo.id)
+            removeFromLocalStorage(todo.id);
+        }
+    });
+
+    // Enable inline editing on button click
+    editBtn.addEventListener('click', () => {
+        todoText.contentEditable = "true";
+        todoText.focus();
+    });
+
+    // Save edited task when Enter key is pressed
+    todoText.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            todoText.contentEditable = "false";
+            todo.todo = todoText.textContent.trim();
+            updateTask(todo);
         }
     });
 
     todoTableBody.appendChild(row);
-    // Update count after adding task
     updateTaskCount(); 
 }
 
+function updateTask(updatedTodo) {
+    updateLocalStorage(updatedTodo);
+    putRequest(updatedTodo);
+}
