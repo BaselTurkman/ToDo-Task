@@ -34,8 +34,6 @@ export function addTask(todo, todoTableBody) {
         const isCompleted = todoText.classList.toggle('completed');
         toggleBtn.textContent = isCompleted ? 'Undo' : 'Complete';
         statusCell.textContent = isCompleted ? 'Completed' : 'Pending';
-        statusCell.classList.toggle('completed-status', isCompleted);
-        statusCell.classList.toggle('pending-status', !isCompleted);
         todo.completed = isCompleted;
         putRequest(todo);
         updateLocalStorage(todo);
